@@ -1,14 +1,16 @@
 # coding: utf-8
 
-_DBUSER = "username" # 数据库用户名
-_DBPASS = "password" # 数据库密码
-_DBHOST = "localhost" # 数据库地址
-_DBNAME = "collipa" # 数据库名称
+# Database Info
+_DBUSER = "username"
+_DBPASS = "password"
+_DBHOST = "localhost"
+_DBNAME = "collipa"
 
-_SMTPUSER = 'example@gmail.com' # 邮箱用户名
-_SMTPPASS = 'password' # 邮箱密码
-_SMTPHOST = 'smtp.gmail.com' # 邮箱地址
-_SMTPPORT = '587' # 邮箱端口
+# Email info to send email
+_SMTPUSER = 'example@gmail.com'
+_SMTPPASS = 'password'
+_SMTPHOST = 'smtp.gmail.com'
+_SMTPPORT = '587'
 
 class rec:
     database = 'mysql://%s:%s@%s/%s?charset=utf8' % (_DBUSER, _DBPASS, _DBHOST, _DBNAME)
