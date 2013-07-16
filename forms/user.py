@@ -20,7 +20,7 @@ class MessageForm(BaseForm):
         ],
     )
 
-    @with_transaction
+    @db_session
     def save(self, user_id, message_box1_id, message_box2_id):
         data = self.data
         data.update({'user_id': user_id, 'message_box1_id': message_box1_id,
