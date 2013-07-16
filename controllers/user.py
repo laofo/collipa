@@ -182,7 +182,7 @@ class SignoutHandler(BaseHandler):
         return self.redirect(self.next_url)
 
 class NotificationHandler(BaseHandler):
-    @with_transaction
+    @db_session
     @tornado.web.authenticated
     def get(self):
         page = force_int(self.get_argument('page', 1), 1)
@@ -193,7 +193,7 @@ class NotificationHandler(BaseHandler):
         return
 
 class MessageHandler(BaseHandler):
-    @with_transaction
+    @db_session
     @tornado.web.authenticated
     def get(self):
         page = force_int(self.get_argument('page', 1), 1)
@@ -222,7 +222,7 @@ class MessageHandler(BaseHandler):
         return self.render("user/message_box.html", category=category, page=page)
 
 class MessageCreateHandler(BaseHandler):
-    @with_transaction
+    @db_session
     @tornado.web.authenticated
     def post(self):
         user_id = force_int(self.get_argument('user_id', 0), 0)
@@ -259,7 +259,7 @@ class MessageCreateHandler(BaseHandler):
         return self.redirect_next_url()
 
 class ApiGetUserNameHandler(BaseHandler):
-    @with_transaction
+    @db_session
     def get(self):
         users = User.select()
         user_json = []
