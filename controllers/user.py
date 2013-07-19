@@ -22,7 +22,7 @@ from helpers import force_int, get_year, get_month
 config = config.rec()
 
 class EmailMixin(object):
-
+    @db_session
     def _create_token(self, user):
         salt = user.create_token(8)
         created = str(int(time.time()))
@@ -173,7 +173,8 @@ class SigninHandler(BaseHandler):
     def get(self):
         form = SigninForm()
         return self.render("user/signin.html", form=form)
-
+    
+    @db_session
     def post(self):
         form = SigninForm(self.request.arguments)
         if form.validate():
@@ -385,6 +386,7 @@ class SettingHandler(BaseHandler):
         form = SettingForm.init(user)
         return self.render("user/setting.html", form=form)
 
+    @db_session
     @tornado.web.authenticated
     def post(self):
         user = self.current_user
@@ -395,6 +397,7 @@ class SettingHandler(BaseHandler):
         return self.render("user/setting.html", form=form)
 
 class AvatarDelHandler(BaseHandler):
+    @db_session
     @tornado.web.authenticated
     def get(self):
         user = self.current_user

@@ -11,6 +11,7 @@ import models as m
 config = config.rec()
 
 class BaseHandler(tornado.web.RequestHandler):
+    @db_session
     def get_current_user(self):
         user_json = self.get_secure_cookie('user')
         if user_json:
@@ -25,6 +26,7 @@ class BaseHandler(tornado.web.RequestHandler):
             return None
         else:
             return None
+
 
     def set_current_user(self, user):
         if user:
