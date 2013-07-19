@@ -5,7 +5,9 @@ echo "install tools..."
 sudo apt-get install -y wget vim unzip curl git 
 
 echo "install package..."
-sudo apt-get install -y build-essential  python-dev python-pip
+sudo apt-get install -y build-essential  python-dev python-pip memcached mysql-server
 sudo pip install --upgrade pip
 
-
+echo "install pony..."
+git clone https://github.com/ponyorm/pony
+sudo python ./pony/setup.py install
