@@ -6,12 +6,31 @@ import getopt
 import MySQLdb
 from pony.orm import *
 import config
+from models import db, Node
 
 config = config.rec()
 
 m = MySQLdb.Connect(host=config.db_host, user=config.db_user, passwd=\
     config.db_pass)
 c = m.cursor()
+
+@db_session
+def init_db():
+
+    c.execute("create database %s" % config.db_name)
+    c.execute("grant all privileges on %s.* to '%s'@'localhost' identified by '%s'" % (config.db_name, config.db_user, config.db_pass))
+    c.execute("flush privileges")
+    c.close()
+    m.commit()
+    m.close()
+
+@db_session
+def check_db():
+    if not Node.get(id=1):
+        Node(name=u'根节点', urlname='root',
+             description=u'一切的根源').save()
+    print("数据库表初始化成功")
+
 
 def main(argv):
     try:
@@ -20,25 +39,16 @@ def main(argv):
     except getopt.GetoptError:
         print("参数错误")
         sys.exit(2)
-
     for opt, val in opts:
         if opt == "--init":
             try:
-                c.execute("create database %s" % config.db_name)
-                c.execute("grant all privileges on %s.* to '%s'@'localhost' identified by '%s'" % (config.db_name, config.db_user, config.db_pass))
-                c.execute("flush privileges")
-
-                c.close()
-                m.commit()
-                m.close()
+                init_db()
             except:
                 pass
-            from models import db, Node
+            
             db.generate_mapping(create_tables=True)
-            if not Node.get(id=1):
-                Node(name=u'根节点', urlname='root',
-                        description=u'一切的根源').save()
-            print("数据库表初始化成功")
+            check_db()
+
         if opt == '--iwanttodropdatabase':
             key = raw_input("你确定要删除数据库？所有数据将消失，且无法恢复！！！(若确定请输入yes i do,否则直接按回车键！):\n")
             if key == "yes i do":
