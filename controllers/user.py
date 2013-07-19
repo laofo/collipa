@@ -30,6 +30,7 @@ class EmailMixin(object):
         token = "%s|%s|%s|%s" % (user.email, salt, created, hsh)
         return base64.b64encode(token)
 
+    @db_session
     def _verify_token(self, token):
         try:
             token = base64.b64decode(token)
@@ -69,6 +70,7 @@ class EmailMixin(object):
         message.send()
 
 class HomeHandler(BaseHandler):
+    @db_session
     def get(self, urlname, view='index', category='all'):
         page = force_int(self.get_argument('page', 1), 1)
         user = User.get(urlname=urlname)
@@ -107,6 +109,7 @@ class HomeHandler(BaseHandler):
                 category=category, page=page, page_count=page_count, url=url)
 
 class SignupHandler(BaseHandler, EmailMixin):
+    @db_session
     def get(self):
         token = self.get_argument('verify', None)
         if token:
@@ -126,6 +129,7 @@ class SignupHandler(BaseHandler, EmailMixin):
         form = SignupForm()
         return self.render("user/signup.html", form=form)
 
+    @db_session
     def post(self):
         if self.current_user and self.get_argument("action", '') == 'email':
             if self.current_user.role != 'unverify':
@@ -145,6 +149,7 @@ class SignupHandler(BaseHandler, EmailMixin):
             return self.redirect_next_url()
         return self.render("user/signup.html", form=form)
 
+    @db_session
     def send_register_email(self, user):
         token = self._create_token(user)
         url = '%s/signup?verify=%s' % \
@@ -281,7 +286,8 @@ class PasswordHandler(BaseHandler, EmailMixin):
         if not self.current_user:
             return self.redirect('/signin')
         return self.render('user/password.html', token=None)
-
+    
+    @db_session
     def post(self):
         action = self.get_argument('action', None)
         if action == 'email':
@@ -294,6 +300,7 @@ class PasswordHandler(BaseHandler, EmailMixin):
             return self.change_password()
         self.find_password()
 
+    @db_session
     def send_password_email(self):
         email = self.get_argument('email', None)
         if self.current_user:
@@ -321,7 +328,8 @@ class PasswordHandler(BaseHandler, EmailMixin):
         ) % {'email': user.alias, 'url': url}
         self.flash_message('邮件已经发送，请检查您的邮箱', 'success')
         self.send_email(self, user.email, '找回密码', template)
-
+    
+    @db_session
     @tornado.web.authenticated
     def change_password(self):
         user = User.get(id=self.current_user.id)
@@ -332,7 +340,8 @@ class PasswordHandler(BaseHandler, EmailMixin):
         password1 = self.get_argument('password1', None)
         password2 = self.get_argument('password2', None)
         self._change_password(user, password1, password2)
-
+    
+    @db_session
     def find_password(self):
         token = self.get_argument('token', None)
         if not token:
@@ -344,6 +353,7 @@ class PasswordHandler(BaseHandler, EmailMixin):
         password2 = self.get_argument('password2', None)
         self._change_password(user, password1, password2)
 
+    @db_session
     def _change_password(self, user, password1, password2):
         if password1 != password2:
             token = self.get_argument('verify', None)
@@ -368,7 +378,7 @@ class FindPasswordPageHandler(BaseHandler):
         return self.render("user/findpassword.html")
 
 class SettingHandler(BaseHandler):
-
+    
     @tornado.web.authenticated
     def get(self):
         user = self.current_user
@@ -407,6 +417,7 @@ class AvatarUploadHandler(BaseHandler):
         self.render("user/avatar_upload.html")
         return
 
+    @db_session
     def post(self):
         if self.request.files == {} or 'myavatar' not in self.request.files:
             self.write({"status": "error",
@@ -480,6 +491,7 @@ class AvatarUploadHandler(BaseHandler):
             src, "height": height, "width": width})
 
 class AvatarCropHandler(BaseHandler):
+    @db_session
     @tornado.web.authenticated
     def get(self):
         if not self.current_user.avatar_tmp:
@@ -490,6 +502,7 @@ class AvatarCropHandler(BaseHandler):
             return self.redirect_next_url()
         return self.render("user/avatar_crop.html")
 
+    @db_session
     @tornado.web.authenticated
     def post(self):
         user = self.current_user
@@ -537,6 +550,7 @@ class AvatarCropHandler(BaseHandler):
         return self.redirect_next_url()
 
 class BackgroundDelHandler(BaseHandler):
+    @db_session
     @tornado.web.authenticated
     def get(self):
         try:
@@ -556,6 +570,7 @@ class BackgroundDelHandler(BaseHandler):
         return self.redirect_next_url()
 
 class ImgUploadHandler(BaseHandler):
+    @db_session
     @tornado.web.authenticated
     def post(self):
         if not self.has_permission:
@@ -643,6 +658,7 @@ class ImgUploadHandler(BaseHandler):
         return
 
 class ShowHandler(BaseHandler):
+    @db_session
     def get(self):
         page = force_int(self.get_argument('page', 1), 1)
         category = self.get_argument('category', None)

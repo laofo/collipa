@@ -122,6 +122,7 @@ class EditHandler(BaseHandler):
         return self.render("reply/edit.html", form=form, reply=reply)
 
 class HistoryHandler(BaseHandler):
+    @db_session
     def get(self, reply_id):
         reply = Reply.get(id=reply_id)
         if not reply:
