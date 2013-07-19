@@ -10,4 +10,5 @@ sudo pip install --upgrade pip
 
 echo "install pony..."
 git clone https://github.com/ponyorm/pony
-sudo python ./pony/setup.py install
+cd pony
+sudo python setup.py install
