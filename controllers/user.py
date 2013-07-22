@@ -379,7 +379,7 @@ class FindPasswordPageHandler(BaseHandler):
         return self.render("user/findpassword.html")
 
 class SettingHandler(BaseHandler):
-    
+    @db_session    
     @tornado.web.authenticated
     def get(self):
         user = self.current_user
