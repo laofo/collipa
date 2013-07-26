@@ -7,12 +7,14 @@ import os
 import sys
 import logging
 import tempfile
+from  pony.orm import *
 from PIL import Image
 from ._base import BaseHandler
 import tornado.web
 from helpers import strip_tags, get_year, get_month
 
 class UploadHandler(BaseHandler):
+    @db_session
     @tornado.web.authenticated
     def post(self):
         if not self.has_permission:
