@@ -7,7 +7,7 @@ import os
 import sys
 import logging
 import tempfile
-import Image
+from PIL import Image
 from ._base import BaseHandler
 import tornado.web
 from helpers import strip_tags, get_year, get_month
