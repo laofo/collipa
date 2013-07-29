@@ -1,5 +1,4 @@
 # coding: utf-8
-
 import hashlib
 from random import choice
 import time
@@ -41,9 +40,7 @@ class User(db.Entity, SessionMixin, ModelMixin):
     """
     collection_count = Required(int, default=0)
 
-    """ following_count 正在关注的数目
-        follower_count  关注者的数目
-    """
+
     following_count = Required(int, default=0)
     follower_count = Required(int, default=0)
 
@@ -61,7 +58,7 @@ class User(db.Entity, SessionMixin, ModelMixin):
     avatar_tmp = Optional(unicode, 400)
     head_img = Optional(unicode, 400)
     background_img = Optional(unicode, 400)
-
+    
     @staticmethod
     def init(**kargs):
         token = User.create_token(16)
@@ -253,6 +250,7 @@ class User(db.Entity, SessionMixin, ModelMixin):
             follow.remove()
             return {'status': 'success', 'message': '取消关注成功', 'type': 0}
 
+    @db_session
     def thank(self, topic_id=None, reply_id=None):
         now = int(time.time())
         self.active = now
