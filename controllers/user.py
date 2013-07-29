@@ -379,7 +379,8 @@ class FindPasswordPageHandler(BaseHandler):
         return self.render("user/findpassword.html")
 
 class SettingHandler(BaseHandler):
-    @db_session    
+
+    @db_session
     @tornado.web.authenticated
     def get(self):
         user = self.current_user
@@ -415,6 +416,7 @@ class AvatarDelHandler(BaseHandler):
         self.redirect(self.next_url)
 
 class AvatarUploadHandler(BaseHandler):
+    @db_session
     @tornado.web.authenticated
     def get(self):
         self.render("user/avatar_upload.html")

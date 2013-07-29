@@ -62,11 +62,13 @@ class SignupForm(BaseForm):
         ],
     )
 
+    @db_session
     def validate_name(self, field):
         data = field.data.lower()
         if data in config.forbidden_name_list or User.get(name=data):
             raise ValidationError('此用户名已注册')
 
+    @db_session
     def validate_email(self, field):
         data = field.data.lower()
         if User.get(email=data):
@@ -100,6 +102,7 @@ class SigninForm(BaseForm):
     )
     #permanent = BooleanField('记住我')
 
+    @db_session
     def validate_password(self, field):
         account = self.account.data
         if '@' in account:

@@ -122,6 +122,7 @@ class BaseHandler(tornado.web.RequestHandler):
             self.redirect_next_url()
         return False
 
+    @db_session
     def get_error_html(self, status_code, **kwargs):
         if status_code == 404:
             return self.render("site/404.html")
