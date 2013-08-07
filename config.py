@@ -1,16 +1,16 @@
-# coding: utf-8
+﻿# coding: utf-8
 
 # Database Info
-_DBUSER = "username"
-_DBPASS = "password"
+_DBUSER = "root"
+_DBPASS = "Firewall1"
 _DBHOST = "localhost"
 _DBNAME = "collipa"
 
 # Email info to send email
-_SMTPUSER = 'example@gmail.com'
-_SMTPPASS = 'password'
-_SMTPHOST = 'smtp.gmail.com'
-_SMTPPORT = '587'
+_SMTPUSER = 'liuxue.gu@igt.com'
+_SMTPPASS = ''
+_SMTPHOST = '10.210.41.203'
+_SMTPPORT = '25'
 
 class rec:
     database = 'mysql://%s:%s@%s/%s?charset=utf8' % (_DBUSER, _DBPASS, _DBHOST, _DBNAME)
@@ -23,8 +23,8 @@ class rec:
     cookie_secret = 'cookiesecret' # cookie secret
     password_secret = 'passwordsecret' # password secret
 
-    site_name = 'Collipa'
-    site_url = 'http://127.0.0.1:8008'
+    site_name = '瞎扯淡'
+    site_url = 'http://10.175.29.149:8008'
     site_description = 'Good'
 
     paged = 18
