@@ -9,7 +9,7 @@ import os
 import sys
 import logging
 import tempfile
-from PIL import Image
+import Image
 
 import config
 from ._base import BaseHandler
@@ -22,7 +22,7 @@ from helpers import force_int, get_year, get_month
 config = config.rec()
 
 class EmailMixin(object):
-    @db_session
+
     def _create_token(self, user):
         salt = user.create_token(8)
         created = str(int(time.time()))
@@ -149,7 +149,6 @@ class SignupHandler(BaseHandler, EmailMixin):
             return self.redirect_next_url()
         return self.render("user/signup.html", form=form)
 
-    @db_session
     def send_register_email(self, user):
         token = self._create_token(user)
         url = '%s/signup?verify=%s' % \
@@ -173,7 +172,7 @@ class SigninHandler(BaseHandler):
     def get(self):
         form = SigninForm()
         return self.render("user/signin.html", form=form)
-    
+
     @db_session
     def post(self):
         form = SigninForm(self.request.arguments)
@@ -279,7 +278,6 @@ class PasswordHandler(BaseHandler, EmailMixin):
     - GET: 1. form view 2. verify link from email
     - POST: 1. send email to find password. 2. change password
     """
-    @db_session
     def get(self):
         token = self.get_argument('verify', None)
         if token and self._verify_token(token):
@@ -288,8 +286,7 @@ class PasswordHandler(BaseHandler, EmailMixin):
         if not self.current_user:
             return self.redirect('/signin')
         return self.render('user/password.html', token=None)
-    
-    @db_session
+
     def post(self):
         action = self.get_argument('action', None)
         if action == 'email':
@@ -333,7 +330,7 @@ class PasswordHandler(BaseHandler, EmailMixin):
         result = {"status": "success", "message": "邮件已经发送，请检查您的邮箱"}
         self.flash_message(result)
         self.send_email(self, user.email, '找回密码', template)
-    
+
     @db_session
     @tornado.web.authenticated
     def change_password(self):
@@ -346,8 +343,7 @@ class PasswordHandler(BaseHandler, EmailMixin):
         password1 = self.get_argument('password1', None)
         password2 = self.get_argument('password2', None)
         self._change_password(user, password1, password2)
-    
-    @db_session
+
     def find_password(self):
         token = self.get_argument('token', None)
         if not token:
@@ -365,12 +361,8 @@ class PasswordHandler(BaseHandler, EmailMixin):
             token = self.get_argument('verify', None)
             result = {"status": "error", "message": "两次输入的密码不匹配"}
             self.flash_message(result)
-            return self.render('user/password.html', token=token)
-        if not password1:
-            token = self.get_argument('verify', None)
-            result = {"status": "error", "message": "新密码不能为空"}
-            self.flash_message(result)
-            return self.render('user/password.html', token=token)
+            self.render('user/password.html', token=token)
+            return
         user.password = user.create_password(password1)
         user.token = user.create_token(16)
         try:
@@ -380,11 +372,10 @@ class PasswordHandler(BaseHandler, EmailMixin):
         result = {"status": "success", "message": "密码已修改"}
         self.flash_message(result)
         self.set_current_user(user)
-        return self.redirect('/account/password')
+        self.redirect('/account/password')
 
 class FindPasswordHandler(BaseHandler):
 
-    @db_session
     def get(self):
         if self.current_user:
             return self.redirect_next_url()
